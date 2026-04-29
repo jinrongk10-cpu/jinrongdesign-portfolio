@@ -28,6 +28,16 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      (function () {
+        var base = '%BASE_URL%';
+        var params = new URLSearchParams(window.location.search);
+        var p = params.get('p');
+        if (p) {
+          window.history.replaceState(null, '', base.replace(/\/$/, '') + p);
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
