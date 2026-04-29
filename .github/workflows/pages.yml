@@ -34,6 +34,7 @@ jobs:
       - name: Build
         env:
           GITHUB_PAGES: "true"
+          BASE_PATH: "/${{ github.event.repository.name }}/"
         run: npm run build
 
       - name: Upload artifact
