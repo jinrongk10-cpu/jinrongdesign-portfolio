@@ -7,6 +7,15 @@ import Model from '../components/Model';
 import { useAppStore } from '../store/useAppStore';
 import { projectsData } from '../data/projects';
 
+const withBase = (path: string) => {
+  if (!path) return path;
+  if (/^https?:\/\//i.test(path)) return path;
+  const base = import.meta.env.BASE_URL || '/';
+  const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+  const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
+  return `${normalizedBase}${normalizedPath}`;
+};
+
 const t = {
   en: {
     nav: { design: 'DESIGN', art: 'ART', about: 'ABOUT' },
@@ -114,7 +123,7 @@ const t = {
 
 export default function Home() {
   const { lang, toggleLang } = useAppStore();
-  const modelUrl = "/773973a7162c4c6cd6801cffcc071ee9.glb";
+  const modelUrl = withBase("/773973a7162c4c6cd6801cffcc071ee9.glb");
   const dict = t[lang];
 
   return (
@@ -182,7 +191,7 @@ export default function Home() {
               </div>
               <div className="aspect-video bg-dark/10 relative overflow-hidden">
                 <img 
-                  src="/gildrift.jpg" 
+                  src={withBase('/gildrift.jpg')} 
                   alt="Video Thumbnail" 
                   className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105" 
                   onError={(e) => { 
@@ -225,7 +234,7 @@ export default function Home() {
                   <div className={`grid grid-cols-2 gap-2 ${index % 2 !== 0 ? 'md:col-start-2' : ''}`}>
                     <Link to={`/project/${project.id}`} className="col-span-2 aspect-[4/3] bg-dark/5 overflow-hidden border border-dark shadow-[4px_4px_0px_0px_rgba(11,11,11,1)] group cursor-pointer relative block">
                       <img 
-                        src={project.images[0]} 
+                        src={withBase(project.images[0])} 
                         alt={pData.title} 
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
                         onError={(e) => { 
@@ -359,7 +368,7 @@ export default function Home() {
 
       {/* Floating CTA */}
       <div className="fixed bottom-8 right-8 z-50">
-        <a href="/CV.pdf" download className="bg-dark text-white px-5 py-3 rounded-full text-xs font-bold flex items-center hover:bg-dark/90 transition-colors shadow-xl uppercase">
+        <a href={withBase('/CV.pdf')} download className="bg-dark text-white px-5 py-3 rounded-full text-xs font-bold flex items-center hover:bg-dark/90 transition-colors shadow-xl uppercase">
           {dict.cta}
         </a>
       </div>

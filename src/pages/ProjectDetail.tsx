@@ -4,6 +4,15 @@ import { ArrowLeft, Globe, PlayCircle } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { projectsData } from '../data/projects';
 
+const withBase = (path: string) => {
+  if (!path) return path;
+  if (/^https?:\/\//i.test(path)) return path;
+  const base = import.meta.env.BASE_URL || '/';
+  const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+  const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
+  return `${normalizedBase}${normalizedPath}`;
+};
+
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
   const { lang, toggleLang } = useAppStore();
@@ -88,7 +97,7 @@ export default function ProjectDetail() {
             </div>
             {/* Optional Background Image for Hero */}
             {project.heroImage && (
-              <div className="absolute right-0 top-0 w-1/2 h-full opacity-20 pointer-events-none" style={{ background: `url(${project.heroImage}) center/cover no-repeat` }}></div>
+              <div className="absolute right-0 top-0 w-1/2 h-full opacity-20 pointer-events-none" style={{ background: `url(${withBase(project.heroImage)}) center/cover no-repeat` }}></div>
             )}
             {/* Scroll Indicator */}
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-xs font-bold tracking-widest animate-bounce uppercase opacity-50">
@@ -100,6 +109,7 @@ export default function ProjectDetail() {
           {pData.sections.map((sec, idx) => {
             // Determine which image to use based on language and availability
             const currentImage = (lang === 'zh' && sec.imageZh) ? sec.imageZh : sec.image;
+            const currentImageUrl = currentImage ? withBase(currentImage) : currentImage;
 
             return (
             <section key={sec.id} className="h-screen w-full snap-start flex items-center justify-center px-6 md:px-12 relative overflow-hidden">
@@ -107,9 +117,9 @@ export default function ProjectDetail() {
                 
                 {sec.layout === 'full-image' && (
                   <div className="w-full h-full flex flex-col items-center justify-center relative">
-                    {currentImage && (
+                    {currentImageUrl && (
                       <div className="w-full h-full flex items-center justify-center relative">
-                        <img src={currentImage} alt={sec.title || 'Project Detail'} className="max-w-full max-h-full object-contain shadow-2xl" />
+                        <img src={currentImageUrl} alt={sec.title || 'Project Detail'} className="max-w-full max-h-full object-contain shadow-2xl" />
                         
                         {/* Video Link Overlay */}
                         {sec.videoUrl && (
@@ -149,8 +159,8 @@ export default function ProjectDetail() {
                       )}
                     </div>
                     <div className="md:col-span-8 h-[50vh] md:h-[80vh] flex items-center justify-center">
-                      {currentImage && (
-                        <img src={currentImage} alt={sec.title || 'Project Detail'} className="max-w-full max-h-full object-contain shadow-2xl" />
+                      {currentImageUrl && (
+                        <img src={currentImageUrl} alt={sec.title || 'Project Detail'} className="max-w-full max-h-full object-contain shadow-2xl" />
                       )}
                     </div>
                   </div>
@@ -163,8 +173,8 @@ export default function ProjectDetail() {
                     </div>
                     <div className="md:col-span-6 h-[50vh] md:h-[70vh] flex flex-col items-center justify-center text-center">
                       {sec.title && <h2 className="text-2xl md:text-4xl font-bold mb-8 uppercase">{sec.title}</h2>}
-                      {currentImage && (
-                        <img src={currentImage} alt={sec.title || 'Project Detail'} className="max-w-full max-h-full object-contain shadow-2xl" />
+                      {currentImageUrl && (
+                        <img src={currentImageUrl} alt={sec.title || 'Project Detail'} className="max-w-full max-h-full object-contain shadow-2xl" />
                       )}
                       {/* Mobile text fallback */}
                       <div className="md:hidden mt-6 text-sm opacity-80">
@@ -257,7 +267,7 @@ export default function ProjectDetail() {
         {/* Hero Image */}
         <div className={`w-full aspect-video bg-dark/5 mb-16 md:mb-24 border ${isDark ? 'border-white/20' : 'border-dark shadow-[8px_8px_0px_0px_rgba(11,11,11,1)]'} overflow-hidden`}>
           <img 
-            src={project.heroImage || project.images[0]} 
+            src={withBase(project.heroImage || project.images[0])} 
             alt={pData.title} 
             className="w-full h-full object-cover"
             onError={(e) => { 
@@ -307,7 +317,7 @@ export default function ProjectDetail() {
               return (
                 <div key={idx} className={`w-full bg-dark/5 border ${isDark ? 'border-white/20' : 'border-dark shadow-[8px_8px_0px_0px_rgba(11,11,11,1)]'} overflow-hidden`}>
                   <img 
-                    src={img} 
+                    src={withBase(img)} 
                     alt={`${pData.title} detail ${idx + 1}`} 
                     className="w-full h-auto"
                     onError={(e) => { 
